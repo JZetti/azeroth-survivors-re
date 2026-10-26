@@ -2018,3 +2018,22 @@ fn ladder(foes: &[Foe], tuned: &[EnemyDef]) -> Vec<EnemyDef> {
         })
         .collect()
 }
+
+//first test for frostbolt and make sure it works and damage/CD numbers are correct. 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn frostbolt_has_correct_stats() {
+        let frostbolt = ABILITIES
+            .iter()
+            .find(|a| a.key == "frostbolt")
+            .expect("Frostbolt should exist");
+
+        assert_eq!(frostbolt.damage, 12.0);
+        assert_eq!(frostbolt.cooldown, 1.3);
+        assert_eq!(frostbolt.range, 24.0);
+    }
+}
+
