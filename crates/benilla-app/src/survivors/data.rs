@@ -2019,7 +2019,7 @@ fn ladder(foes: &[Foe], tuned: &[EnemyDef]) -> Vec<EnemyDef> {
         .collect()
 }
 
-//first test for frostbolt and make sure it works and damage/CD numbers are correct. 
+//first test for frostbolt and make sure it works and damage/CD numbers are correct.
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -2035,5 +2035,109 @@ mod tests {
         assert_eq!(frostbolt.cooldown, 1.3);
         assert_eq!(frostbolt.range, 24.0);
     }
-}
 
+    // Test 2 - Pyroblast
+    #[test]
+    fn pyroblast_has_correct_stats() {
+        let pyroblast = ability("pyroblast");
+        assert_eq!(pyroblast.damage, 70.0);
+        assert_eq!(pyroblast.dot, 6.0);
+        assert_eq!(pyroblast.cooldown, 6.0);
+        assert_eq!(pyroblast.range, 30.0);
+    }
+
+    // Test 3 - Arcane Missiles
+    #[test]
+    fn arcane_missiles_has_three_projectiles() {
+        let arcane_missiles = ability("arcane_missiles");
+        assert_eq!(arcane_missiles.damage, 6.0);
+        assert_eq!(arcane_missiles.cooldown, 1.9);
+        assert_eq!(arcane_missiles.range, 22.0);
+        assert_eq!(arcane_missiles.count, 3);
+    }
+
+    // Test 4 - Frost Nova
+    #[test]
+    fn frost_nova_has_root_effect() {
+        let nova = ability("frost_nova");
+
+        assert_eq!(nova.damage, 8.0);
+        assert_eq!(nova.radius, 9.0);
+        assert_eq!(nova.effect, Effect::Root(2.5));
+    }
+
+    // Test 5 - Blizzard
+    #[test]
+    fn blizzard_has_correct_stats() {
+        let blizzard = ability("blizzard");
+
+        assert_eq!(blizzard.damage, 7.0);
+        assert_eq!(blizzard.cooldown, 9.0);
+        assert_eq!(blizzard.duration, 6.0);
+        assert_eq!(blizzard.effect, Effect::Slow(0.6, 1.5));
+    }
+
+    // Test 6 - Warrior Cleave
+    #[test]
+    fn cleave_has_correct_stats() {
+        let cleave = ability("cleave");
+
+        assert_eq!(cleave.damage, 14.0);
+        assert_eq!(cleave.cooldown, 1.1);
+        assert_eq!(cleave.range, 5.5);
+        assert_eq!(cleave.count, 3);
+    }
+
+    // Test 7- Fireball stats
+    #[test]
+    fn fireball_has_correct_stats() {
+        let fireball = ability("fireball");
+
+        assert_eq!(fireball.damage, 20.0);
+        assert_eq!(fireball.cooldown, 2.4);
+        assert_eq!(fireball.range, 26.0);
+        assert_eq!(fireball.radius, 3.5);
+    }
+
+    // Test 8 - No duplicate ability names
+    #[test]
+    fn ability_names_are_unique() {
+        for i in 0..ABILITIES.len() {
+            for j in (i + 1)..ABILITIES.len() {
+                assert_ne!(
+                    ABILITIES[i].key, ABILITIES[j].key,
+                    "Duplicate ability found: {}",
+                    ABILITIES[i].key
+                );
+            }
+        }
+    }
+
+    // Test 9 - Cooldowns should be valid
+    #[test]
+    fn abilities_have_valid_cooldowns() {
+        for a in ABILITIES {
+            assert!(
+                a.cooldown.is_finite() && a.cooldown > 0.0,
+                "Invalid cooldown for {}",
+                a.key
+            );
+        }
+    }
+
+    // Test 10 - Class starting abilities
+    #[test]
+    fn classes_have_valid_starting_abilities() {
+        for class in CLASSES {
+            let exists = ABILITIES.iter().any(|a| a.key == class.start);
+
+            assert!(exists, "Starting ability missing for {}", class.name);
+
+            assert!(
+                class.pool.contains(&class.start),
+                "Starting ability not in pool for {}",
+                class.name
+            );
+        }
+    }
+}
